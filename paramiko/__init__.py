@@ -60,6 +60,9 @@ __version__ = "1.10.0"
 __license__ = "GNU Lesser General Public License (LGPL)"
 
 
+import six
+
+
 from .transport import SecurityOptions, Transport
 from .client import SSHClient, MissingHostKeyPolicy, AutoAddPolicy, RejectPolicy, WarningPolicy
 from .auth_handler import AuthHandler
@@ -86,12 +89,14 @@ from .hostkeys import HostKeys
 from .config import SSHConfig
 from .proxy import ProxyCommand
 
-# fix module names for epydoc
-for c in locals().values():
-    if issubclass(type(c), type) or type(c).__name__ == 'classobj':
-        # classobj for exceptions :/
-        c.__module__ = __name__
-del c
+
+if not six.PY3:
+    # fix module names for epydoc
+    for c in locals().values():
+        if issubclass(type(c), type) or type(c).__name__ == 'classobj':
+            # classobj for exceptions :/
+            c.__module__ = __name__
+    del c
 
 from .common import AUTH_SUCCESSFUL, AUTH_PARTIALLY_SUCCESSFUL, AUTH_FAILED, \
      OPEN_SUCCEEDED, OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED,  OPEN_FAILED_CONNECT_FAILED, \
