@@ -292,7 +292,7 @@ class Transport (threading.Thread):
                     sock = socket.socket(af, socket.SOCK_STREAM)
                     try:
                         retry_on_signal(lambda: sock.connect((hostname, port)))
-                    except socket.error, e:
+                    except socket.error as e:
                         reason = str(e)
                     else:
                         break
@@ -1197,7 +1197,7 @@ class Transport (threading.Thread):
                         return []
                     return [ password ]
                 return self.auth_interactive(username, handler)
-            except SSHException, ignored:
+            except SSHException as ignored:
                 # attempt failed; just raise the original exception
                 raise x
         return None
@@ -1602,11 +1602,11 @@ class Transport (threading.Thread):
                         msg.add_byte(chr(MSG_UNIMPLEMENTED))
                         msg.add_int(m.seqno)
                         self._send_message(msg)
-            except SSHException, e:
+            except SSHException as e:
                 self._log(ERROR, 'Exception: ' + str(e))
                 self._log(ERROR, util.tb_strings())
                 self.saved_exception = e
-            except EOFError, e:
+            except EOFError as e:
                 self._log(DEBUG, 'EOF in transport thread')
                 #self._log(DEBUG, util.tb_strings())
                 self.saved_exception = e
@@ -1617,7 +1617,7 @@ class Transport (threading.Thread):
                     emsg = e.args
                 self._log(ERROR, 'Socket exception: ' + emsg)
                 self.saved_exception = e
-            except Exception, e:
+            except Exception as e:
                 self._log(ERROR, 'Unknown exception: ' + str(e))
                 self._log(ERROR, util.tb_strings())
                 self.saved_exception = e
@@ -1677,7 +1677,7 @@ class Transport (threading.Thread):
                 buf = self.packetizer.readline(timeout)
             except ProxyCommandFailure:
                 raise
-            except Exception, x:
+            except Exception as x:
                 raise SSHException('Error reading SSH protocol banner' + str(x))
             if buf[:4] == 'SSH-':
                 break

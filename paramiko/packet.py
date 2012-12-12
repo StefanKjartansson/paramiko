@@ -364,7 +364,7 @@ class Packetizer (object):
                 raise SSHException('Mismatched MAC')
         padding = ord(packet[0])
         payload = packet[1:packet_size - padding]
-        
+
         if self.__dump_packets:
             self._log(DEBUG, 'Got payload (%d bytes, %d padding)' % (packet_size, padding))
 
@@ -471,7 +471,7 @@ class Packetizer (object):
                 break
             except socket.timeout:
                 pass
-            except EnvironmentError, e:
+            except EnvironmentError as e:
                 if ((type(e.args) is tuple) and (len(e.args) > 0) and
                     (e.args[0] == errno.EINTR)):
                     pass
