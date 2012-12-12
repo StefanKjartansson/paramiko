@@ -31,23 +31,22 @@ import time
 import weakref
 
 import paramiko
-from paramiko import util
-from paramiko.auth_handler import AuthHandler
-from paramiko.channel import Channel
-from paramiko.common import *
-from paramiko.compress import ZlibCompressor, ZlibDecompressor
-from paramiko.dsskey import DSSKey
-from paramiko.kex_gex import KexGex
-from paramiko.kex_group1 import KexGroup1
-from paramiko.message import Message
-from paramiko.packet import Packetizer, NeedRekeyException
-from paramiko.primes import ModulusPack
-from paramiko.rsakey import RSAKey
-from paramiko.server import ServerInterface
-from paramiko.sftp_client import SFTPClient
-from paramiko.ssh_exception import (SSHException, BadAuthenticationType,
+from .auth_handler import AuthHandler
+from .channel import Channel
+from .common import *
+from .compress import ZlibCompressor, ZlibDecompressor
+from .dsskey import DSSKey
+from .kex_gex import KexGex
+from .kex_group1 import KexGroup1
+from .message import Message
+from .packet import Packetizer, NeedRekeyException
+from .primes import ModulusPack
+from .rsakey import RSAKey
+from .server import ServerInterface
+from .sftp_client import SFTPClient
+from .ssh_exception import (SSHException, BadAuthenticationType,
     ChannelException, ProxyCommandFailure)
-from paramiko.util import retry_on_signal
+from .util import retry_on_signal
 
 from Crypto import Random
 from Crypto.Cipher import Blowfish, AES, DES3, ARC4
@@ -55,7 +54,7 @@ from Crypto.Hash import SHA, MD5
 try:
     from Crypto.Util import Counter
 except ImportError:
-    from paramiko.util import Counter
+    from .util import Counter
 
 from .compat import six, long
 
@@ -355,7 +354,7 @@ class Transport (threading.Thread):
         self.clear_to_send_lock = threading.Lock()
         self.clear_to_send_timeout = 30.0
         self.log_name = 'paramiko.transport'
-        self.logger = util.get_logger(self.log_name)
+        self.logger = paramiko.util.get_logger(self.log_name)
         self.packetizer.set_log(self.logger)
         self.auth_handler = None
         self.global_response = None     # response Message from an arbitrary global request
@@ -1320,7 +1319,7 @@ class Transport (threading.Thread):
         @since: 1.1
         """
         self.log_name = name
-        self.logger = util.get_logger(name)
+        self.logger = paramiko.util.get_logger(name)
         self.packetizer.set_log(self.logger)
 
     def get_log_channel(self):
@@ -1496,7 +1495,7 @@ class Transport (threading.Thread):
             return cipher
         elif name.endswith("-ctr"):
             # CTR modes, we need a counter
-            counter = Counter.new(nbits=self._cipher_info[name]['block-size'] * 8, initial_value=util.inflate_long(iv, True))
+            counter = Counter.new(nbits=self._cipher_info[name]['block-size'] * 8, initial_value=paramiko.util.inflate_long(iv, True))
             return self._cipher_info[name]['class'].new(key, self._cipher_info[name]['mode'], iv, counter)
         else:
             return self._cipher_info[name]['class'].new(key, self._cipher_info[name]['mode'], iv)
@@ -1606,7 +1605,7 @@ class Transport (threading.Thread):
                         self._send_message(msg)
             except SSHException as e:
                 self._log(ERROR, 'Exception: ' + str(e))
-                self._log(ERROR, util.tb_strings())
+                self._log(ERROR, paramiko.util.tb_strings())
                 self.saved_exception = e
             except EOFError as e:
                 self._log(DEBUG, 'EOF in transport thread')
@@ -1621,7 +1620,7 @@ class Transport (threading.Thread):
                 self.saved_exception = e
             except Exception as e:
                 self._log(ERROR, 'Unknown exception: ' + str(e))
-                self._log(ERROR, util.tb_strings())
+                self._log(ERROR, paramiko.util.tb_strings())
                 self.saved_exception = e
             _active_threads.remove(self)
             for chan in self._channels.values():
@@ -2123,7 +2122,7 @@ class Transport (threading.Thread):
         always_display = m.get_boolean()
         msg = m.get_string()
         lang = m.get_string()
-        self._log(DEBUG, 'Debug msg: ' + util.safe_string(msg))
+        self._log(DEBUG, 'Debug msg: ' + paramiko.util.safe_string(msg))
 
     def _get_subsystem_handler(self, name):
         try:

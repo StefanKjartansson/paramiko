@@ -30,8 +30,8 @@ import struct
 import traceback
 import threading
 
-from paramiko.common import *
-from paramiko.config import SSHConfig
+from .common import *
+from .config import SSHConfig
 
 from .compat import six, long
 

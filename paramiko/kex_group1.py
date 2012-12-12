@@ -24,12 +24,12 @@ from __future__ import absolute_import, division, print_function
 
 from Crypto.Hash import SHA
 
-from paramiko.common import *
-from paramiko import util
-from paramiko.message import Message
-from paramiko.ssh_exception import SSHException
-
+from .common import *
+from . import util
+from .message import Message
+from .ssh_exception import SSHException
 from .compat import six, long
+
 
 _MSG_KEXDH_INIT, _MSG_KEXDH_REPLY = range(30, 32)
 
