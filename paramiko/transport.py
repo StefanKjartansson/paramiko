@@ -693,7 +693,7 @@ class Transport (threading.Thread):
         """
         return self.open_channel('auth-agent@openssh.com')
 
-    def open_forwarded_tcpip_channel(self, (src_addr, src_port), (dest_addr, dest_port)):
+    def open_forwarded_tcpip_channel(self, src_addr, src_port, dest_addr, dest_port):
         """
         Request a new channel back to the client, of type C{"forwarded-tcpip"}.
         This is used after a client has requested port forwarding, for sending
@@ -704,7 +704,7 @@ class Transport (threading.Thread):
         @param dest_addr: local (server) connected address
         @param dest_port: local (server) connected port
         """
-        return self.open_channel('forwarded-tcpip', (dest_addr, dest_port), (src_addr, src_port))
+        return self.open_channel('forwarded-tcpip', dest_addr, dest_port, src_addr, src_port)
 
     def open_channel(self, kind, dest_addr=None, src_addr=None):
         """
@@ -813,7 +813,7 @@ class Transport (threading.Thread):
         if port == 0:
             port = response.get_int()
         if handler is None:
-            def default_handler(channel, (src_addr, src_port), (dest_addr, dest_port)):
+            def default_handler(channel, src_addr, src_port, dest_addr, dest_port):
                 self._queue_incoming_channel(channel)
             handler = default_handler
         self._tcp_handler = handler
@@ -1183,7 +1183,7 @@ class Transport (threading.Thread):
             return []
         try:
             return self.auth_handler.wait_for_response(my_event)
-        except BadAuthenticationType, x:
+        except BadAuthenticationType as x:
             # if password auth isn't allowed, but keyboard-interactive *is*, try to fudge it
             if not fallback or ('keyboard-interactive' not in x.allowed_types):
                 raise
@@ -1513,7 +1513,7 @@ class Transport (threading.Thread):
         # only called if a channel has turned on x11 forwarding
         if handler is None:
             # by default, use the same mechanism as accept()
-            def default_handler(channel, (src_addr, src_port)):
+            def default_handler(channel, src_addr, src_port):
                 self._queue_incoming_channel(channel)
             self._x11_handler = default_handler
         else:
@@ -1612,7 +1612,7 @@ class Transport (threading.Thread):
                 self._log(DEBUG, 'EOF in transport thread')
                 #self._log(DEBUG, util.tb_strings())
                 self.saved_exception = e
-            except socket.error, e:
+            except socket.error as e:
                 if type(e.args) is tuple:
                     emsg = '%s (%d)' % (e.args[1], e.args[0])
                 else:
