@@ -704,7 +704,7 @@ class Transport (threading.Thread):
         @param dest_addr: local (server) connected address
         @param dest_port: local (server) connected port
         """
-        return self.open_channel('forwarded-tcpip', dest_addr, dest_port, src_addr, src_port)
+        return self.open_channel('forwarded-tcpip', (dest_addr, dest_port), (src_addr, src_port))
 
     def open_channel(self, kind, dest_addr=None, src_addr=None):
         """
