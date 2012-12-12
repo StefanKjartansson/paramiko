@@ -31,6 +31,9 @@ from paramiko.sftp_si import *
 from paramiko.sftp_attr import *
 
 
+from .compat import PERM
+
+
 # known hash algorithms for the "check-file" extension
 _hash_class = {
     'sha1': SHA,
@@ -73,14 +76,14 @@ class SFTPServer (BaseSFTP, SubsystemHandler):
         self.file_table = { }
         self.folder_table = { }
         self.server = sftp_si(server, *largs, **kwargs)
-        
+
     def _log(self, level, msg):
         if issubclass(type(msg), list):
             for m in msg:
                 super(SFTPServer, self)._log(level, "[chan " + self.sock.get_name() + "] " + m)
         else:
             super(SFTPServer, self)._log(level, "[chan " + self.sock.get_name() + "] " + msg)
-        
+
     def start_subsystem(self, name, transport, channel):
         self.sock = channel
         self._log(DEBUG, 'Started sftp server on channel %s' % repr(channel))
@@ -150,7 +153,7 @@ class SFTPServer (BaseSFTP, SubsystemHandler):
 
         This is meant to be a handy helper function for translating SFTP file
         requests into local file operations.
-        
+
         @param filename: name of the file to alter (should usually be an
             absolute path).
         @type filename: str
@@ -294,7 +297,7 @@ class SFTPServer (BaseSFTP, SubsystemHandler):
         msg.add_string(algname)
         msg.add_bytes(sum_out)
         self._send_packet(CMD_EXTENDED_REPLY, str(msg))
-    
+
     def _convert_pflags(self, pflags):
         "convert SFTP-style open() flags to python's os.open() flags"
         if (pflags & SFTP_FLAG_READ) and (pflags & SFTP_FLAG_WRITE):
