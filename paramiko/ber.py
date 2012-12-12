@@ -15,9 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Paramiko; if not, write to the Free Software Foundation, Inc.,
 # 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+from __future__ import absolute_import, division, print_function
 
 
-import util
+from . import util
 
 
 class BERException (Exception):
@@ -41,7 +42,7 @@ class BER(object):
 
     def decode(self):
         return self.decode_next()
-    
+
     def decode_next(self):
         if self.idx >= len(self.content):
             return None
