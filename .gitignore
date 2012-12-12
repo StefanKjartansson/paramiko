@@ -1,4 +1,5 @@
-*.pyc
+*.py[oc]
+*sw[po]
 build/
 dist/
 paramiko.egg-info/
