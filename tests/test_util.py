@@ -21,7 +21,7 @@ Some unit tests for utility functions.
 """
 
 from binascii import hexlify
-import cStringIO
+from six import StringIO
 import errno
 import os
 import unittest
@@ -41,7 +41,7 @@ Host *.example.com
     \tUser bjork
 Port=3333
 Host *
- \t  \t Crazy something dumb  
+ \t  \t Crazy something dumb
 Host spoo.example.com
 Crazy something else
 """
@@ -101,7 +101,7 @@ class UtilTest(ParamikoTest):
 
     def test_2_parse_config(self):
         global test_config_file
-        f = cStringIO.StringIO(test_config_file)
+        f = StringIO(test_config_file)
         config = paramiko.util.parse_ssh_config(f)
         self.assertEquals(config._config,
                           [ {'identityfile': '~/.ssh/id_rsa', 'host': '*', 'user': 'robey',
@@ -111,7 +111,7 @@ class UtilTest(ParamikoTest):
 
     def test_3_host_config(self):
         global test_config_file
-        f = cStringIO.StringIO(test_config_file)
+        f = StringIO(test_config_file)
         config = paramiko.util.parse_ssh_config(f)
         for host, values in {
             'irc.danger.com': {'user': 'robey', 'crazy': 'something dumb  '},
@@ -151,7 +151,7 @@ class UtilTest(ParamikoTest):
         # just verify that we can pull out 32 bytes and not get an exception.
         x = rng.read(32)
         self.assertEquals(len(x), 32)
-        
+
     def test_7_host_config_expose_ssh_issue_33(self):
         test_config_file = """
 Host www13.*
@@ -163,7 +163,7 @@ Host *.example.com
 Host *
     Port 3333
     """
-        f = cStringIO.StringIO(test_config_file)
+        f = StringIO(test_config_file)
         config = paramiko.util.parse_ssh_config(f)
         host = 'www13.example.com'
         self.assertEquals(
@@ -207,7 +207,7 @@ Host space-delimited
 Host equals-delimited
     ProxyCommand=foo bar=biz baz
 """
-        f = cStringIO.StringIO(conf)
+        f = StringIO(conf)
         config = paramiko.util.parse_ssh_config(f)
         for host in ('space-delimited', 'equals-delimited'):
             self.assertEquals(
@@ -219,7 +219,7 @@ Host equals-delimited
         """
         ProxyCommand should perform interpolation on the value
         """
-        config = paramiko.util.parse_ssh_config(cStringIO.StringIO("""
+        config = paramiko.util.parse_ssh_config(StringIO("""
 Host *
     Port 25
     ProxyCommand host %h port %p
